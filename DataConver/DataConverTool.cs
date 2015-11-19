@@ -1181,7 +1181,7 @@ namespace DataConver
                             recordset.SeekID(m);
                             recordset.Edit();
                             object name = recordset.GetObject("T_NAME");
-                            seekExcel(name.ToString(), dt, recordset);
+                            seekExcel(name.ToString(), dt, recordset,m);
 
                         }
 
@@ -1211,7 +1211,7 @@ namespace DataConver
 
 
         }
-        private void seekExcel(string Name, DataTable dt,Recordset recordset)
+        private void seekExcel(string Name, DataTable dt,Recordset recordset,int m)
         {
             try
             {
@@ -1227,22 +1227,35 @@ namespace DataConver
                                 {
                                     if (dt.Columns[recircle].ColumnName == "GDP")
                                     {
+                                        recordset.SeekID(m);
+                                        recordset.Edit();
                                         object valueGDP = dt.Rows[r][recircle];
                                         recordset.SetFieldValue("GDP", valueGDP);
-                                        recordset.Update();
+recordset.Update();
+                                        MessageBox.Show(valueGDP.ToString() + recordset.GetObject("GDP").ToString());
+                                        
                                     }
                                     else
                                         if (dt.Columns[recircle].ColumnName == "FARMLAND")
                                         {
+                                            recordset.SeekID(m);
+                                            recordset.Edit();
                                             object valueAC = dt.Rows[r][recircle];
                                             recordset.SetFieldValue("耕地面积", valueAC);
                                             recordset.Update();
+
+                                            MessageBox.Show(valueAC.ToString() + recordset.GetObject("耕地面积").ToString());
+
                                         }
                                         else if (dt.Columns[recircle].ColumnName == "POPUL")
                                         {
+                                            recordset.SeekID(m);
+                                            recordset.Edit();
                                             object valuePE = dt.Rows[r][recircle];
                                             recordset.SetFieldValue("总人口", valuePE);
                                             recordset.Update();
+                                            MessageBox.Show(valuePE.ToString() + recordset.GetObject("总人口").ToString());
+
                                         }
                                         else
                                             continue;
