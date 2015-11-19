@@ -1176,87 +1176,29 @@ namespace DataConver
                                      3）对数据集中特定字段逐行赋值*/
                     try
                     {
-                        for (int c = 0; c < dt.Columns.Count; c++)
+                        for (int m = 1; m < length; m++)//行循环更新
                         {
-                            if (dt.Columns[c].ColumnName == "NAME")
-                            {
-                                int s = 1;
-                                for (int r = 0; r < dt.Rows.Count; r++)
-                                {
-                                    
-                                    recordset.SeekID(s);
+                            recordset.SeekID(m);
+                            recordset.Edit();
+                            object name = recordset.GetObject("T_NAME");
+                            seekExcel(name.ToString(), dt, recordset);
 
-                                    object name = recordset.GetObject("T_NAME");
-                                    //更新属性
-                                    if (dt.Rows[r][c] == name)
-                                    {
-                                        MessageBox.Show("");
-                                    }
-
-                                }
-                                break;
-                            }
-                            else
-                                continue;
                         }
-                            for (int m = 0; m < dt.Columns.Count; m++)
-                            {
-                                if (dt.Columns[m].ColumnName == null)
-                                    continue;
 
-                                if (dt.Columns[m].ColumnName == "GDP")
-                                {
-                                    for (Int32 i = 1; i < length; i++)
-                                    {
+                        recordset.Update();
 
-                                        recordset.SeekID(i);
-                                        recordset.Edit();
-                                        if (i > dt.Rows.Count)
-                                            continue;
-                                        object valueGDP = dt.Rows[i - 1][m];
-                                        recordset.SetFieldValue("GDP", valueGDP);
-                                    }
-                                }
-                                else
-                                    if (dt.Columns[m].ColumnName == "FARMLAND")
-                                    {
-                                        for (Int32 i = 1; i < length; i++)
-                                        {
-                                            recordset.SeekID(i);
-                                            recordset.Edit();
-                                            if (i > dt.Rows.Count)
-                                                continue;
-                                            object valueAC = dt.Rows[i - 1][m];
-                                            recordset.SetFieldValue("耕地面积", valueAC);
-                                        }
-                                    }
-                                    else
-                                        if (dt.Columns[m].ColumnName == "POPUL")
-                                        {
-                                            for (Int32 i = 1; i < length; i++)
-                                            {
-                                                recordset.SeekID(i);
-                                                recordset.Edit();
-                                                if (i > dt.Rows.Count)
-                                                    continue;
-                                                object valuePE = dt.Rows[i - 1][m];
-                                                recordset.SetFieldValue("总人口", valuePE);
-                                            }
-                                        }
-                                        else
-                                            continue;
+                        Msg("修改属性字段完成");
 
-
-                            }
                     }
+
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message);
                     }
-                    recordset.Update();
 
-                    Msg("修改属性字段完成");
+
                 }
+
                 else
                 {
                     Msg("记录集中没有记录");
@@ -1268,6 +1210,54 @@ namespace DataConver
             }
 
 
+        }
+        private void seekExcel(string Name, DataTable dt,Recordset recordset)
+        {
+            try
+            {
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    if (dt.Columns[i].ColumnName == "NAME")
+                    {
+                        for (int r = 0; r < dt.Rows.Count; r++)
+                        {
+                            if (dt.Rows[r][i].ToString() == Name)
+                            {
+                                for (int recircle = 0; recircle < dt.Columns.Count; recircle++)
+                                {
+                                    if (dt.Columns[recircle].ColumnName == "GDP")
+                                    {
+                                        object valueGDP = dt.Rows[r][recircle];
+                                        recordset.SetFieldValue("GDP", valueGDP);
+                                        recordset.Update();
+                                    }
+                                    else
+                                        if (dt.Columns[recircle].ColumnName == "FARMLAND")
+                                        {
+                                            object valueAC = dt.Rows[r][recircle];
+                                            recordset.SetFieldValue("耕地面积", valueAC);
+                                            recordset.Update();
+                                        }
+                                        else if (dt.Columns[recircle].ColumnName == "POPUL")
+                                        {
+                                            object valuePE = dt.Rows[r][recircle];
+                                            recordset.SetFieldValue("总人口", valuePE);
+                                            recordset.Update();
+                                        }
+                                        else
+                                            continue;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         private void createAndImport(string type1, string type2, string sourPath, DatasourceConnectionInfo info)
         {
