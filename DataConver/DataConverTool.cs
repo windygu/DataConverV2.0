@@ -272,8 +272,8 @@ namespace DataConver
                     pgrs(p++);
                 }
                 Msg("复制成果图成功！");
-                File.Copy(information[0].FullName, outPath_Final + information[0].Name);
-                File.Copy(yuanData[0].FullName, outPath_Final + yuanData[0].Name);
+                //File.Copy(information[0].FullName, outPath_Final + information[0].Name);
+                //File.Copy(yuanData[0].FullName, outPath_Final + yuanData[0].Name);
 
 //----------------------------------------------------------------------------------------
 //生成处理报告
@@ -893,11 +893,7 @@ namespace DataConver
                 MessageBox.Show(ex.Message);
             }
         }
-        //文件复制
-        public void CopyFile(string SoursePath,string aimPath)
-        {
-            File.Copy(SoursePath, aimPath, true);
-        }
+        
 //======================================================================================
         
         
