@@ -75,9 +75,12 @@
             this.barButtonItem5 = new DevExpress.XtraBars.BarButtonItem();
             this.ribbonGalleryBarItem1 = new DevExpress.XtraBars.RibbonGalleryBarItem();
             this.barHeaderItem1 = new DevExpress.XtraBars.BarHeaderItem();
+            this.barButtonItem6 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem7 = new DevExpress.XtraBars.BarButtonItem();
             this.User_Manage = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.River_manage = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.System_set = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.splitContainerControl1 = new DevExpress.XtraEditors.SplitContainerControl();
             this.xtraTabControl_Left = new DevExpress.XtraTab.XtraTabControl();
             this.Pag_UndealData = new DevExpress.XtraTab.XtraTabPage();
@@ -109,6 +112,7 @@
             this.labelX1 = new DevComponents.DotNetBar.LabelX();
             this.axLicenseControl1 = new ESRI.ArcGIS.Controls.AxLicenseControl();
             this.xtraTabPage1 = new DevExpress.XtraTab.XtraTabPage();
+            this.axMapControl1 = new ESRI.ArcGIS.Controls.AxMapControl();
             this.ribbonPageGroup3 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
@@ -149,6 +153,8 @@
             this.expandablePanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.axLicenseControl1)).BeginInit();
+            this.xtraTabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axMapControl1)).BeginInit();
             this.Undeal_Menu_Tool.SuspendLayout();
             this.Deal_Menu_Tool.SuspendLayout();
             this.SuspendLayout();
@@ -200,10 +206,12 @@
             this.User_Now,
             this.barButtonItem5,
             this.ribbonGalleryBarItem1,
-            this.barHeaderItem1});
+            this.barHeaderItem1,
+            this.barButtonItem6,
+            this.barButtonItem7});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
             this.ribbonControl1.Margin = new System.Windows.Forms.Padding(5);
-            this.ribbonControl1.MaxItemId = 75;
+            this.ribbonControl1.MaxItemId = 77;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.User_Manage});
@@ -572,11 +580,27 @@
             this.barHeaderItem1.Id = 72;
             this.barHeaderItem1.Name = "barHeaderItem1";
             // 
+            // barButtonItem6
+            // 
+            this.barButtonItem6.Caption = "barButtonItem6";
+            this.barButtonItem6.Id = 75;
+            this.barButtonItem6.Name = "barButtonItem6";
+            // 
+            // barButtonItem7
+            // 
+            this.barButtonItem7.Caption = "生成淹没过程";
+            this.barButtonItem7.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem7.Glyph")));
+            this.barButtonItem7.Id = 76;
+            this.barButtonItem7.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem7.LargeGlyph")));
+            this.barButtonItem7.Name = "barButtonItem7";
+            this.barButtonItem7.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem7_ItemClick_1);
+            // 
             // User_Manage
             // 
             this.User_Manage.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
             this.River_manage,
-            this.System_set});
+            this.System_set,
+            this.ribbonPageGroup1});
             this.User_Manage.Name = "User_Manage";
             this.User_Manage.Text = "编制单元处理功能区";
             // 
@@ -594,6 +618,12 @@
             this.System_set.ItemLinks.Add(this.User_down);
             this.System_set.Name = "System_set";
             this.System_set.Text = "系统设置";
+            // 
+            // ribbonPageGroup1
+            // 
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem7);
+            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
+            this.ribbonPageGroup1.Text = "处理";
             // 
             // splitContainerControl1
             // 
@@ -632,7 +662,7 @@
             this.Pag_UndealData.Font = new System.Drawing.Font("宋体", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Pag_UndealData.Image = ((System.Drawing.Image)(resources.GetObject("Pag_UndealData.Image")));
             this.Pag_UndealData.Name = "Pag_UndealData";
-            this.Pag_UndealData.Size = new System.Drawing.Size(289, 393);
+            this.Pag_UndealData.Size = new System.Drawing.Size(285, 389);
             this.Pag_UndealData.Text = "未处理编制单元";
             // 
             // but_Process
@@ -702,7 +732,7 @@
             this.Lis_UndealData.FullRowSelect = true;
             this.Lis_UndealData.Location = new System.Drawing.Point(0, 0);
             this.Lis_UndealData.Name = "Lis_UndealData";
-            this.Lis_UndealData.Size = new System.Drawing.Size(289, 393);
+            this.Lis_UndealData.Size = new System.Drawing.Size(285, 389);
             this.Lis_UndealData.TabIndex = 0;
             this.Lis_UndealData.UseCompatibleStateImageBehavior = false;
             this.Lis_UndealData.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.Lis_UndealData_ItemCheck);
@@ -769,7 +799,7 @@
             this.xtraTabControl_Center.Location = new System.Drawing.Point(0, 0);
             this.xtraTabControl_Center.Name = "xtraTabControl_Center";
             this.xtraTabControl_Center.SelectedTabPage = this.Pag_ProcessMsg;
-            this.xtraTabControl_Center.Size = new System.Drawing.Size(525, 436);
+            this.xtraTabControl_Center.Size = new System.Drawing.Size(524, 436);
             this.xtraTabControl_Center.TabIndex = 2;
             this.xtraTabControl_Center.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
             this.Pag_ProcessMsg,
@@ -782,7 +812,7 @@
             this.Pag_ProcessMsg.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Pag_ProcessMsg.Image = ((System.Drawing.Image)(resources.GetObject("Pag_ProcessMsg.Image")));
             this.Pag_ProcessMsg.Name = "Pag_ProcessMsg";
-            this.Pag_ProcessMsg.Size = new System.Drawing.Size(523, 393);
+            this.Pag_ProcessMsg.Size = new System.Drawing.Size(518, 389);
             this.Pag_ProcessMsg.Text = "处理信息进度输出";
             // 
             // panelEx1
@@ -806,7 +836,7 @@
             this.panelEx1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelEx1.Location = new System.Drawing.Point(0, 0);
             this.panelEx1.Name = "panelEx1";
-            this.panelEx1.Size = new System.Drawing.Size(523, 393);
+            this.panelEx1.Size = new System.Drawing.Size(518, 389);
             this.panelEx1.Style.Alignment = System.Drawing.StringAlignment.Center;
             this.panelEx1.Style.BackColor1.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this.panelEx1.Style.BackColor2.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
@@ -894,9 +924,9 @@
             this.expandablePanel1.DisabledBackColor = System.Drawing.Color.Empty;
             this.expandablePanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.expandablePanel1.HideControlsWhenCollapsed = true;
-            this.expandablePanel1.Location = new System.Drawing.Point(0, 162);
+            this.expandablePanel1.Location = new System.Drawing.Point(0, 158);
             this.expandablePanel1.Name = "expandablePanel1";
-            this.expandablePanel1.Size = new System.Drawing.Size(523, 231);
+            this.expandablePanel1.Size = new System.Drawing.Size(518, 231);
             this.expandablePanel1.Style.Alignment = System.Drawing.StringAlignment.Center;
             this.expandablePanel1.Style.BackColor1.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this.expandablePanel1.Style.BackColor2.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
@@ -927,7 +957,7 @@
             this.MessageShow.Rtf = "{\\rtf1\\ansi\\ansicpg936\\deff0\\deflang1033\\deflangfe2052{\\fonttbl{\\f0\\fnil\\fcharset" +
     "134 \\\'ce\\\'a2\\\'c8\\\'ed\\\'d1\\\'c5\\\'ba\\\'da;}}\r\n\\viewkind4\\uc1\\pard\\lang2052\\f0\\fs24\\pa" +
     "r\r\n}\r\n";
-            this.MessageShow.Size = new System.Drawing.Size(523, 205);
+            this.MessageShow.Size = new System.Drawing.Size(518, 205);
             this.MessageShow.TabIndex = 12;
             // 
             // progressBar
@@ -1012,9 +1042,19 @@
             // 
             // xtraTabPage1
             // 
+            this.xtraTabPage1.Controls.Add(this.axMapControl1);
             this.xtraTabPage1.Name = "xtraTabPage1";
             this.xtraTabPage1.Size = new System.Drawing.Size(518, 389);
-            this.xtraTabPage1.Text = "xtraTabPage1";
+            this.xtraTabPage1.Text = "完整地图";
+            // 
+            // axMapControl1
+            // 
+            this.axMapControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.axMapControl1.Location = new System.Drawing.Point(0, 0);
+            this.axMapControl1.Name = "axMapControl1";
+            this.axMapControl1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMapControl1.OcxState")));
+            this.axMapControl1.Size = new System.Drawing.Size(518, 389);
+            this.axMapControl1.TabIndex = 0;
             // 
             // ribbonPageGroup3
             // 
@@ -1206,10 +1246,6 @@
             this.列表ToolStripMenuItem1.Text = "列表";
             this.列表ToolStripMenuItem1.Click += new System.EventHandler(this.列表Deal_Menu_Tool_Click);
             // 
-            // defaultLookAndFeel1
-            // 
-            this.defaultLookAndFeel1.LookAndFeel.Style = DevExpress.LookAndFeel.LookAndFeelStyle.Office2003;
-            // 
             // MainForm
             // 
             this.AllowFormGlass = DevExpress.Utils.DefaultBoolean.False;
@@ -1240,6 +1276,8 @@
             this.expandablePanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.progressBar.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.axLicenseControl1)).EndInit();
+            this.xtraTabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.axMapControl1)).EndInit();
             this.Undeal_Menu_Tool.ResumeLayout(false);
             this.Deal_Menu_Tool.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1352,6 +1390,10 @@
         private DevExpress.XtraTab.XtraTabPage xtraTabPage1;
         private DevExpress.LookAndFeel.DefaultLookAndFeel defaultLookAndFeel1;
         private DevExpress.LookAndFeel.DefaultLookAndFeel defaultLookAndFeel2;
+        private ESRI.ArcGIS.Controls.AxMapControl axMapControl1;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem6;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem7;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
     }
 }
 

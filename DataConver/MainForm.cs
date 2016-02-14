@@ -91,7 +91,7 @@ namespace DataConver
             //设置路径
             //undeal_path.Text = System.IO.Path.Combine(undeal_Path + "\\" + list[0]);
             //passWord = textEdit1.Text;
-            DCT = new DataConverTool(this.lab_progress, this.labelX3, this.progressBar, this.MessageShow);
+            DCT = new DataConverTool(this.lab_progress, this.labelX3, this.progressBar, this.MessageShow,axMapControl1);
             undeal_Path = Undeal_heduan;
         }
         //用户退出
@@ -625,12 +625,25 @@ namespace DataConver
             {
                 undeal_path.Text = this.Undeal_heduanX + "\\" + manyDeal;
                 di = new DirectoryInfo(undeal_path.Text);
+
                 //数据检查工具
                 if (di.GetDirectories("*地图数据库与图件成果").Length == 0 || di.GetDirectories("tiffPath").Length == 0 || di.GetDirectories("*风险图应用业务相关数据").Length == 0)
                 {
                     MessageBox.Show("请检查" + manyDeal + "文件下数据完整性！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
+                //DirectoryInfo tif = new DirectoryInfo(di.GetDirectories("tiffPath")[0].FullName);
+                //FileInfo[] tifFile = tif.GetFiles("*.tif", SearchOption.AllDirectories);
+                //if (tifFile.Length == 0)
+                //{
+                //    if (MessageBox.Show("系统检查当前无淹没过程影像数据，是否进行影像数据提取？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                //    {
+                //        TIFF tf = new TIFF();
+                //        tf.StartPosition = FormStartPosition.CenterScreen;
+                //        tf.Show();
+                //        return;
+                //    }
+                //}
                 try
                 {
 
@@ -694,6 +707,13 @@ namespace DataConver
         private void Lis_UndealData_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             test();
+        }
+
+        private void barButtonItem7_ItemClick_1(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            TIFF tif = new TIFF();
+            tif.StartPosition = FormStartPosition.CenterScreen;
+            tif.Show();
         }
     }
     public abstract class SplashScreenApplicationContext : ApplicationContext

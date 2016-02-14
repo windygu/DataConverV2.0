@@ -318,14 +318,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DataConver.exe" size="1695232">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DataConver.exe" size="1713152">
       <assemblyIdentity name="DataConver" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>khV8S1cpCmqVcTPqa9vLtO1+iB4=</dsig:DigestValue>
+        <dsig:DigestValue>f73V/15qnj1H4YQ2XLxWmYPsQE4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

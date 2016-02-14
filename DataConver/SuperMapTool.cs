@@ -51,6 +51,7 @@ namespace SuperMapTool
         {
             try
             {
+                //wks.Datasources.Open(info);
                 // 1. 构建数据源连接对象。 // info.Database = @"G:\数据转换\测试数据\Test\text.udb";数据库型
                 //DatasourceConnectionInfo info = new DatasourceConnectionInfo();
                 //info.Server = sourceUDB;//如@"G:\数据转换\测试数据\Test\text.udb";
@@ -537,7 +538,7 @@ namespace SuperMapTool
             }
             //Sql语句
             //string strExcel = string.Format("select * from [{0}$]", strSheetName); 这是一种方法
-            string strExcel = "select * from   [sheet1$]";
+            string strExcel = "select * from   ["+strSheetName+"$]";
 
             //定义存放的数据表
             DataSet ds = new DataSet();
