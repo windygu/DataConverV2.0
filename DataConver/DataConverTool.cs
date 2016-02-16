@@ -157,8 +157,10 @@ namespace DataConver
                 string SavaPath = @"D:\移动风险监测\新数据测试数据\tiffPath\" + shpFileName;
                 //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();
                 //Feature2Raster(gp,shpFilePath+"\\"+shpFileName+".shp", SavaPath+"\\time.tif");
-                JoinPoint(gp, shpFilePath+"\\", shpFileName, "czLayer","ymcz");
-                MessageBox.Show(Caculate(shpFileName, shpFilePath,"GRIDAREA").ToString());
+                //JoinPoint(gp, shpFilePath+"\\", shpFileName, "czLayer","ymcz");
+
+                MessageBox.Show(caculateCountry("ymcz", shpFilePath).ToString());
+                MessageBox.Show(Caculate(shpFileName, shpFilePath, "GRIDAREA").ToString());
                 readTXT(txtPath, shpFilePath, shpFileName, SavaPath);
                 MessageBox.Show(ExecDateDiff(dt1, DateTime.Now));
                //setValue("ymss1", @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据", value);
@@ -938,15 +940,9 @@ namespace DataConver
         {
             try
             {
-                //创建工作空间
-                //IWorkspaceFactory pwokspace = new FileGDBWorkspaceFactoryClass();
-                //IWorkspace workspace = pwokspace.OpenFromFile(environment, 0);
-                //IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)workspace;
-                //新建GP
-                //gp.SetEnvironmentValue("workspace", environment);
-                //gp.SetEnvironmentValue("environment", environment+"\\");
                 ESRI.ArcGIS.AnalysisTools.Intersect  intersect = new Intersect();
-                intersect.in_features = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\ymss1.shp;D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\czLayer.shp";
+                intersect.in_features = environment + SourseName1 + ".shp;" + environment + SourseName2 + ".shp";
+                    //@"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\ymss1.shp;D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\czLayer.shp";
                 intersect.out_feature_class = environment + SavaName;
                 intersect.output_type = "POINT";
                 gp.Execute(intersect, null);
@@ -954,6 +950,27 @@ namespace DataConver
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+        //点面叠置统计
+        public Double caculateCountry(string shpFileName, string shpFilePath)
+        {
+            try
+            {
+                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
+                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
+                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
+                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
+                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                ITable pTable = (ITable)pFeatureClass;
+                double count = pTable.RowCount(null);
+                return count;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
             }
         }
 //======================================================================================
