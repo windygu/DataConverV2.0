@@ -935,7 +935,7 @@ namespace DataConver
                 return 0;
             }
         }
-        //点面叠置
+        //村庄点面叠置
         public void JoinPoint(Geoprocessor gp,string environment,string SourseName1,string SourseName2,string SavaName)
         {
             try
@@ -952,7 +952,7 @@ namespace DataConver
                 MessageBox.Show(ex.Message);
             }
         }
-        //点面叠置统计
+        //村庄点面叠置统计
         public Double caculateCountry(string shpFileName, string shpFilePath)
         {
             try
@@ -971,6 +971,31 @@ namespace DataConver
             {
                 MessageBox.Show(ex.Message);
                 return 0;
+            }
+        }
+//---------------------------------------------------------------------------------------------------
+        //excel数据转CSV
+        public void TransferCSV()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        //csv数据导入数据源
+        public void ImportCSV()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 //======================================================================================
