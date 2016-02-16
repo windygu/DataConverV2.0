@@ -776,12 +776,13 @@ namespace DataConver
             try
             {
                 //进行对shp数据的复制然后进行字段为零时的删除  完成后对点数据进行叠加分析
-                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
-                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
-                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
-                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
+                //IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
+                //IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
+                //IFeatureLayer pFeatureLayer = new FeatureLayerClass();
+                //pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
                 //pFeatureLayer.Name = pFeatureLayer.FeatureClass.AliasName;
-                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                IFeatureClass pFeatureClass = shpToFeatureClass(shpFileName, shpFilePath);
+                //IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
                 //使要素处于编辑状态
                 IDataset dataset = (IDataset)pFeatureClass;
                 IWorkspace workspace = dataset.Workspace;
@@ -789,7 +790,7 @@ namespace DataConver
                 workspaceEdit.StartEditing(true);
                 workspaceEdit.StartEditOperation();
                 //int i = 0;
-                if (pFeatureLayer != null)
+                if (pFeatureClass != null)
                 {
                     int nIndex = pFeatureClass.FindField("GRIDCODE");
                     int ValueIndex = pFeatureClass.FindField("VALUE");
@@ -901,11 +902,7 @@ namespace DataConver
         {
             try
             {
-                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
-                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
-                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
-                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
-                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                IFeatureClass pFeatureClass = shpToFeatureClass(shpFileName, shpFilePath);
                 ITable pTable = (ITable)pFeatureClass;
                 double count=0;
                 ICursor pcursor = pTable.Update(null, false);
@@ -957,11 +954,7 @@ namespace DataConver
         {
             try
             {
-                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
-                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
-                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
-                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
-                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                IFeatureClass pFeatureClass= shpToFeatureClass(shpFileName, shpFilePath);
                 ITable pTable = (ITable)pFeatureClass;
                 double count = pTable.RowCount(null);
                 return count;
@@ -971,6 +964,24 @@ namespace DataConver
             {
                 MessageBox.Show(ex.Message);
                 return 0;
+            }
+        }
+        //处理shp文件
+        public IFeatureClass shpToFeatureClass(string shpFileName, string shpFilePath)
+        {
+            try
+            {
+                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
+                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
+                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
+                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
+                //IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                return pFeatureLayer.FeatureClass;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
             }
         }
 //---------------------------------------------------------------------------------------------------
