@@ -75,6 +75,26 @@ namespace SuperMapTool
                 MessageBox.Show(ex.Message);
             }
         }
+        public void ImportCSV(string targetName,string importPath, DatasourceConnectionInfo info)
+        {
+            try
+            {
+                ImportSettingCSV importSettingCSV = new ImportSettingCSV();
+                importSettingCSV.ImportMode = ImportMode.Overwrite;//可复写
+                importSettingCSV.FirstRowIsField = true;
+                importSettingCSV.SourceFilePath = importPath;
+                importSettingCSV.TargetDatasourceConnectionInfo = info;
+                importSettingCSV.TargetDatasetName = targetName;
+                DataImport import1 = new DataImport();
+                ImportSettings settings = import1.ImportSettings;
+                settings.Add(importSettingCSV);
+                import1.Run();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         /// <summary>
         /// udb中导入tiff
         /// </summary>

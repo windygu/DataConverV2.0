@@ -148,7 +148,7 @@ namespace DataConver
                 //bhzy(outPath_Mid, outPath_Final);
                 //slgc(outPath_Final, outPath_Mid);
                 //ztdt(outPath_Final, outPath_Mid);
-               
+                CSVImport("bhzyAttr", outPath_Final);
                 //yxfx(dataPath, outPath_Final);
                 //Feature2Raster(gp, @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\ymss1.shp", @"D:\移动风险监测\新数据测试数据\tiffPath\time1.tif");
                 string txtPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\time50.txt";
@@ -493,7 +493,7 @@ namespace DataConver
                         mc = NextFolder.Name;
                         if (mc == "水系面状.shp")
                             continue;
-                        importTool.ImportShp(NextFolder.Directory + "\\" + mc, info);
+                        importTool.ImportShp(NextFolder.FullName, info);
                         pgrs(++p);
                         Msg(mc + "导入成功！");
                     }
@@ -557,13 +557,39 @@ namespace DataConver
                 max = info_file.Length; int p = 0;
                 foreach (FileInfo NextFolder in info_file)//"*.shp",
                 {
-                    importTool.ImportShp(NextFolder.Directory + "\\" + NextFolder.Name, info);
+                    importTool.ImportShp(NextFolder.FullName, info);
                     pgrs(++p);
                     Msg(NextFolder.Name + "导入成功！");
                 }
                 Msg("本次成功导入数据" + importTool.i.ToString() + "条");
                 Msg("用时：" + ExecDateDiff(datetime, DateTime.Now));
                 //}
+                wks.Datasources.CloseAll();
+            }
+            catch (Exception ex)
+            {
+                Msg(ex.Message);
+            }
+        }
+        //excel数据表格导入
+        public void CSVImport(string CSVTargetName, string outPath_Final)
+        {
+            try
+            {
+               
+                DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+                info.Password = set.passWod;
+                info.Server = outPath_Final + "\\" + "bhzy.udb";
+                FileInfo[] info_file = di.GetFiles("*.csv", SearchOption.AllDirectories);
+               
+                foreach (FileInfo NextFolder in info_file)//"*.shp",
+                {
+                    importTool.ImportCSV(CSVTargetName, NextFolder.FullName, info);
+                   
+                    Msg(NextFolder.Name + "导入成功！");
+                }
+                
+              
                 wks.Datasources.CloseAll();
             }
             catch (Exception ex)
@@ -609,6 +635,7 @@ namespace DataConver
                 Msg(ex.Message);
             }
         }
+
 //--------------------------------------------------------------------------------------
         //读取groupLayer
         public void getGroupLayer(AxMapControl mapControl, string outPath_Mid)
@@ -877,9 +904,17 @@ namespace DataConver
             }
         }
         //copy要素赋值
-        public void CopyFeature()
+        public void CopyFeature(Geoprocessor gp, string sourseFeature,string aimFeature)
         {
-
+            try
+            {
+                ESRI.ArcGIS.DataManagementTools.CopyFeatures copyFeature = new CopyFeatures(sourseFeature,aimFeature);
+                gp.Execute(copyFeature,null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         //Feature2Raster转换函数
         public void Feature2Raster(Geoprocessor gp,string shpFile,string SavaPath)
