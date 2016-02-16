@@ -138,8 +138,8 @@ namespace DataConver
                 outPath_Mid = importTool.createFolder(outPath + "\\" + "中间数据");
                 //创建超图结果数据目录
                 outPath_Final = importTool.createFolder(outPath + "\\" + fxtb);
-                File.Copy(information[0].FullName, outPath_Final +"\\"+ information[0].Name);
-                File.Copy(yuanData[0].FullName, outPath_Final + "\\"+yuanData[0].Name);
+                File.Copy(information[0].FullName, outPath_Final +"\\"+ information[0].Name,true);
+                File.Copy(yuanData[0].FullName, outPath_Final + "\\"+yuanData[0].Name,true);
                #region 测试
                 //测试读取属性数据
                 
@@ -157,7 +157,8 @@ namespace DataConver
                 string SavaPath = @"D:\移动风险监测\新数据测试数据\tiffPath\" + shpFileName;
                 //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();
                 //Feature2Raster(gp,shpFilePath+"\\"+shpFileName+".shp", SavaPath+"\\time.tif");
-
+                JoinPoint(gp, shpFilePath+"\\", shpFileName, "czLayer","ymcz");
+                MessageBox.Show(Caculate(shpFileName, shpFilePath,"GRIDAREA").ToString());
                 readTXT(txtPath, shpFilePath, shpFileName, SavaPath);
                 MessageBox.Show(ExecDateDiff(dt1, DateTime.Now));
                //setValue("ymss1", @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据", value);
@@ -893,7 +894,68 @@ namespace DataConver
                 MessageBox.Show(ex.Message);
             }
         }
-        
+        //计算属性中某字段和
+        public Double Caculate(string shpFileName, string shpFilePath,string fileName)
+        {
+            try
+            {
+                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
+                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
+                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
+                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
+                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                ITable pTable = (ITable)pFeatureClass;
+                double count=0;
+                ICursor pcursor = pTable.Update(null, false);
+                IRow pRow = pcursor.NextRow();
+                int nIndex = pFeatureClass.FindField(fileName);
+                if (nIndex != -1)
+                {
+                    IField pField = pFeatureClass.Fields.get_Field(nIndex);
+                    for (int i = 0; i < pTable.RowCount(null); i++)
+                    {
+                        string c = pRow.get_Value(nIndex).ToString();
+                        double v = Convert.ToDouble(c);
+                        count += v;
+                        pRow = pcursor.NextRow();
+                    }
+                    
+                    return count;
+                   
+                }
+                else
+                    return 0;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+        }
+        //点面叠置
+        public void JoinPoint(Geoprocessor gp,string environment,string SourseName1,string SourseName2,string SavaName)
+        {
+            try
+            {
+                //创建工作空间
+                //IWorkspaceFactory pwokspace = new FileGDBWorkspaceFactoryClass();
+                //IWorkspace workspace = pwokspace.OpenFromFile(environment, 0);
+                //IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)workspace;
+                //新建GP
+                //gp.SetEnvironmentValue("workspace", environment);
+                //gp.SetEnvironmentValue("environment", environment+"\\");
+                ESRI.ArcGIS.AnalysisTools.Intersect  intersect = new Intersect();
+                intersect.in_features = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\ymss1.shp;D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\czLayer.shp";
+                intersect.out_feature_class = environment + SavaName;
+                intersect.output_type = "POINT";
+                gp.Execute(intersect, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 //======================================================================================
         
         
