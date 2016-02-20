@@ -149,7 +149,9 @@ namespace DataConver
                 //slgc(outPath_Final, outPath_Mid);
                 //ztdt(outPath_Final, outPath_Mid);
                 //bhzyImport(dataPath, outPath_Final);
-                CSVImport("bhzyAttr", outPath_Final);
+                ExcelDataImport("*查询业务支撑数据.xls", outPath_Final, "ywcxAttr", "ywcx.udb");
+
+               
                 //yxfx(dataPath, outPath_Final);
                 //Feature2Raster(gp, @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\ymss1.shp", @"D:\移动风险监测\新数据测试数据\tiffPath\time1.tif");
                 string txtPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\time50.txt";
@@ -253,6 +255,10 @@ namespace DataConver
                 {
                     Msg("更新属性数据不存在，跳过更新");
                 }
+                //----------------------导入excel数据-------------------------
+                Msg(lab_progress.Text = "【" + fxtb + "】正在导入Excel支撑数据···");
+                ExcelDataImport("*避洪转移展示支撑数据 .xls", outPath_Final, "bhzyAttr", "bhzy.udb");
+                ExcelDataImport("*查询业务支撑数据.xls", outPath_Final, "ywcxAttr", "ywcx.udb");
 //----------------------------------------------------------------------------------------
               //导入地图模板
                 Msg(lab_progress.Text = "【" + fxtb + "】正在加载地图模板···");
@@ -573,15 +579,41 @@ namespace DataConver
             }
         }
         //excel数据表格导入
-        public void CSVImport(string CSVTargetName, string outPath_Final)
+        public void ExcelDataImport(string xlName, string outPath_Final, string csvName, string udbName)
+        {
+            try
+            {
+                //将避洪转移支撑数据导入需要参数：excel路径，"*避洪转移展示支撑数据 .xls"
+                FileInfo[] info_file = di.GetFiles(xlName, SearchOption.AllDirectories);
+                if (info_file != null && info_file.Length > 0)
+                {
+                    bool toCSVStatus = false;
+                    //string bhzyXlName = "bhzyAtrr.csv";
+                    foreach (FileInfo xlPath in info_file)
+                    {
+
+                        toCSVStatus = importTool.toCSVTest(xlPath.DirectoryName + "\\" + xlPath.Name, xlPath.DirectoryName + "\\" + csvName);
+                    }
+                    if (toCSVStatus)
+                    {
+                        CSVImport(csvName, outPath_Final, udbName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void CSVImport(string CSVTargetName, string outPath_Final,string udbName)
         {
             try
             {
                
                 DatasourceConnectionInfo info = new DatasourceConnectionInfo();
                 info.Password = set.passWod;
-                info.Server = outPath_Final + "\\" + "bhzy.udb";
-                FileInfo[] info_file = di.GetFiles("*.csv", SearchOption.AllDirectories);
+                info.Server = outPath_Final + "\\" + udbName;
+                FileInfo[] info_file = di.GetFiles(CSVTargetName, SearchOption.AllDirectories);
                
                 foreach (FileInfo NextFolder in info_file)//"*.shp",
                 {
@@ -1841,7 +1873,9 @@ namespace DataConver
         {
             try
             {
-                DataTable dt = importTool.ExcelToDataTable(xlsPath, "6.5.1综合经济指标表");
+                string[] sheetNameList = importTool.GetSheetNameList(xlsPath);
+                DataTable dt = importTool.ExcelToDataTable(xlsPath , sheetNameList[0]);
+               // DataTable dt = importTool.ExcelToDataTable(xlsPath, "6.5.1综合经济指标表");
 
                 int length = recordset.RecordCount;
                 if (length != 0)

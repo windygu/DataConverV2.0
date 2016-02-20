@@ -678,7 +678,7 @@ namespace SuperMapTool
             }
         }
         //测试转csv
-        public void toCSVTest( string excelPath , string csvPath )
+        public bool toCSVTest( string excelPath , string csvPath )
         {
             try
             {
@@ -686,17 +686,23 @@ namespace SuperMapTool
                 string[] sheetNameList = GetSheetNameList(excelPath);
                 if (sheetNameList != null && sheetNameList.Length > 0)
                 {
-                    foreach(string sheetName in sheetNameList)
+                    foreach (string sheetName in sheetNameList)
                     {
-                        
-                        ExcelToCsv(excelPath, csvPath, sheetName, "|#|", 0);
-                        
+                        string csvNamePath = csvPath + sheetName + ".csv";
+                        if (sheetNameList.Length == 1)
+                            csvNamePath = csvPath + ".csv";
+                        ExcelToCsv(excelPath, csvNamePath, sheetName, "|#|", 1);
+
                     }
+                    return true;
                 }
+                else
+                    return false;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return false;
             }
         }
         //线转面：测试不成功

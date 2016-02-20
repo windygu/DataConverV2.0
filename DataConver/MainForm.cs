@@ -714,15 +714,15 @@ namespace DataConver
         {
             //------------------测试-----------------------------
             string xlsPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\";
-            string fileName = "6.4避洪转移展示支撑数据.xls";
+            string fileName = "6.3影响分析支撑数据.xls";//"6.4避洪转移展示支撑数据 .xls";
             string sheetName = "6.4.1转移单元-转移路线-安置区对应关系表";
-            //importTool.toCSVTest(xlsPath+fileName,xlsPath+"bhzyAttr.csv");
-            //string[] sheetNameList = importTool.GetSheetNameList(xlsPath + fileName);
+            // importTool.toCSVTest(xlsPath + fileName, xlsPath + "bhzyAttr.csv");
+            string[] sheetNameList = importTool.GetSheetNameList(xlsPath + fileName);
             
             
             //importTool.ExcelToCsv(xlsPath + fileName, xlsPath + "bhzyAttr.csv", "6.4.1转移单元-转移路线-安置区对应关系表", "|#|", 0);
-            DataTable dt = importTool.ExcelToDataTable(xlsPath + fileName, sheetName);
-            dataGridViewX1.DataSource = dt;
+            DataTable dt = importTool.ExcelToDataTable(xlsPath + fileName, sheetNameList[0]);
+            //dataGridViewX1.DataSource = dt;
             MessageBox.Show("Success");
             //------------------测试----------------------------
         
