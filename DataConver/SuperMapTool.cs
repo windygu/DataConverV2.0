@@ -12,7 +12,7 @@ using SuperMap.Layout;
 using System.IO;
 using System.Data.OleDb;
 using System.Data;
-
+using Microsoft.Office.Interop.Excel;
 
 using ESRI.ArcGIS.AnalysisTools;
 using ESRI.ArcGIS.DataSourcesGDB;
@@ -67,7 +67,7 @@ namespace SuperMapTool
                 DataImport import1 = new DataImport();
                 ImportSettings settings = import1.ImportSettings;
                 settings.Add(importSettingSHP);
-                import1.Run();
+                ImportResult dd = import1.Run();
                 i++;
             }
             catch (Exception ex)
@@ -86,9 +86,9 @@ namespace SuperMapTool
                 importSettingCSV.TargetDatasourceConnectionInfo = info;
                 importSettingCSV.TargetDatasetName = targetName;
                 DataImport import1 = new DataImport();
-                ImportSettings settings = import1.ImportSettings;
-                settings.Add(importSettingCSV);
-                import1.Run();
+                import1.ImportSettings.Add(importSettingCSV);
+                ImportResult dd= import1.Run();//.GetSucceedDatasetNames(importSettingCSV);
+                
             }
             catch (Exception ex)
             {
@@ -237,7 +237,7 @@ namespace SuperMapTool
         {
             try
             {
-                Application.DoEvents();
+               System.Windows.Forms. Application.DoEvents();
                 string name = "";
                 //Datasource dc = wps.Datasources[UDBname];
                 PrjCoordSys prj = new PrjCoordSys();
@@ -533,8 +533,8 @@ namespace SuperMapTool
                 return null;
             }
         }
-        //读取excel文件
-        public DataTable ExcelToDataTable(string strExcelFileName, string strSheetName)
+        //读取excel文件excel转DataTable
+        public System.Data.DataTable ExcelToDataTable(string strExcelFileName, string strSheetName)
         {
             string strConn;
             FileInfo file = new FileInfo(strExcelFileName);
@@ -558,7 +558,8 @@ namespace SuperMapTool
             }
             //Sql语句
             //string strExcel = string.Format("select * from [{0}$]", strSheetName); 这是一种方法
-            string strExcel = "select * from   ["+strSheetName+"$]";
+            string strExcel = "select * from   [" + strSheetName + "$]"; 
+           // string strExcel = string.Format("select * from [{0}$]" , strSheetName);
 
             //定义存放的数据表
             DataSet ds = new DataSet();
@@ -566,13 +567,137 @@ namespace SuperMapTool
             //连接数据源
             OleDbConnection conn = new OleDbConnection(strConn);
 
-            //conn.Open();
-
+            conn.Open();
+            
             //适配到数据源
             OleDbDataAdapter adapter = new OleDbDataAdapter(strExcel, conn);// strConn);
             adapter.Fill(ds, strSheetName);
-            //conn.Close();
+            conn.Close();
             return ds.Tables[strSheetName];
+        }
+        //获取excel工作表名字
+        public string[] GetSheetNameList(string ExcelFilePath)
+        {
+            try
+            {
+                string strConn;
+                FileInfo file = new FileInfo(ExcelFilePath);
+                if (!file.Exists)
+                {
+                    throw new Exception("文件不存在");
+                }
+                string extension = file.Extension;
+                //源的定义
+                switch (extension)
+                {
+                    case ".xls":
+                        strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ExcelFilePath + ";Extended Properties='Excel 8.0;HDR=Yes;IMEX=1;'";
+                        break;
+                    case ".xlsx":
+                        strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + ExcelFilePath + ";Extended Properties='Excel 12.0;HDR=Yes;IMEX=1;'";
+                        break;
+                    default:
+                        strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ExcelFilePath + ";Extended Properties='Excel 8.0;HDR=Yes;IMEX=1;'";
+                        break;
+                }
+                System.Data.OleDb.OleDbConnection oleDbConnection = new OleDbConnection(strConn);
+                oleDbConnection.Open();
+                System.Data.DataTable dt = oleDbConnection.GetOleDbSchemaTable(System.Data.OleDb.OleDbSchemaGuid.Tables,new object[]{null,null,null,"TABLE"});
+                string[] sheetNameList = new string[dt.Rows.Count];
+                for (int index = 0; index < dt.Rows.Count; index++)
+                {
+                    string name = dt.Rows[index][2].ToString();
+                    string nameChange = name.Replace("#", ".").Replace("$","").Replace("'","");//.Remove(name.LastIndexOf('$'),1);
+                    sheetNameList[index] = nameChange;//dt.Rows[index][2].ToString().Replace('#', '.').Remove('$');
+                }
+                oleDbConnection.Close();
+                return sheetNameList;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        //excel转csv
+        public bool ExcelToCsv(string SourceExcelPathAndName, string targetCSVPathAndName, string excelSheetName, string columnDelimeter, int headerRowsToSkip)
+        {
+            Microsoft.Office.Interop.Excel.Application OXL = null;
+            Microsoft.Office.Interop.Excel.Workbooks workbooks = null;
+            Workbook mWorkbook = null;
+            Sheets mWorkSheets = null;
+            Worksheet mWSheet = null;
+            try
+            {
+                OXL = new Microsoft.Office.Interop.Excel.Application();
+                OXL.Visible = false;
+                OXL.DisplayAlerts = false;
+                workbooks = OXL.Workbooks;
+                mWorkbook = workbooks.Open(SourceExcelPathAndName, 0, false, 5, "", "", false, XlPlatform.xlWindows, "", true, false, 0, true, false, false);
+                mWorkSheets = mWorkbook.Worksheets;
+                mWSheet = (Worksheet)mWorkSheets.get_Item(excelSheetName);
+                Microsoft.Office.Interop.Excel.Range range = mWSheet.UsedRange;
+                Microsoft.Office.Interop.Excel.Range rngCurrentRow;
+                for (int i = 0; i < headerRowsToSkip; i++)
+                {
+                    rngCurrentRow = range.get_Range("A1", Type.Missing).EntireRow;
+                    rngCurrentRow.Delete(XlDeleteShiftDirection.xlShiftUp);
+                }
+                range.Replace("\n", "", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                range.Replace(",", columnDelimeter, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                mWorkbook.SaveAs(targetCSVPathAndName, Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, false);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (mWSheet != null)
+                    mWSheet = null;
+                if (mWorkbook != null)
+                {
+                    mWorkbook.Close(Type.Missing, Type.Missing, Type.Missing);
+                    mWorkbook = null;
+                }
+                if (OXL != null)
+                    OXL.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(OXL);
+                if (OXL != null)
+                    OXL = null;
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+        }
+        //测试转csv
+        public void toCSVTest( string excelPath , string csvPath )
+        {
+            try
+            {
+               
+                string[] sheetNameList = GetSheetNameList(excelPath);
+                if (sheetNameList != null && sheetNameList.Length > 0)
+                {
+                    foreach(string sheetName in sheetNameList)
+                    {
+                        
+                        ExcelToCsv(excelPath, csvPath, sheetName, "|#|", 0);
+                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         //线转面：测试不成功
         private void feture2line(string CN_code, Geoprocessor gp, string outPath, string path, string name)

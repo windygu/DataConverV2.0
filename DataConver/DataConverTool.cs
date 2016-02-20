@@ -148,6 +148,7 @@ namespace DataConver
                 //bhzy(outPath_Mid, outPath_Final);
                 //slgc(outPath_Final, outPath_Mid);
                 //ztdt(outPath_Final, outPath_Mid);
+                //bhzyImport(dataPath, outPath_Final);
                 CSVImport("bhzyAttr", outPath_Final);
                 //yxfx(dataPath, outPath_Final);
                 //Feature2Raster(gp, @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\ymss1.shp", @"D:\移动风险监测\新数据测试数据\tiffPath\time1.tif");
@@ -1020,6 +1021,20 @@ namespace DataConver
             }
         }
 //---------------------------------------------------------------------------------------------------
+        private DataTable readExcel(string xlsPath,string sheelName)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                dt = importTool.ExcelToDataTable(xlsPath, sheelName);//6.4.1转移单元-转移路线-安置区对应关系表
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
         //excel数据转CSV
         public void TransferCSV()
         {

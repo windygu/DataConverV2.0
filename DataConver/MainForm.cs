@@ -606,6 +606,7 @@ namespace DataConver
 
         private void but_Start_Click(object sender, EventArgs e)
         {
+           
             vec_count = 0;
             ras_count = 0;
             this.but_Start.Enabled = false;
@@ -711,9 +712,25 @@ namespace DataConver
 
         private void barButtonItem7_ItemClick_1(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            TIFF tif = new TIFF();
-            tif.StartPosition = FormStartPosition.CenterScreen;
-            tif.Show();
+            //------------------测试-----------------------------
+            string xlsPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\";
+            string fileName = "6.4避洪转移展示支撑数据.xls";
+            string sheetName = "6.4.1转移单元-转移路线-安置区对应关系表";
+            //importTool.toCSVTest(xlsPath+fileName,xlsPath+"bhzyAttr.csv");
+            //string[] sheetNameList = importTool.GetSheetNameList(xlsPath + fileName);
+            
+            
+            //importTool.ExcelToCsv(xlsPath + fileName, xlsPath + "bhzyAttr.csv", "6.4.1转移单元-转移路线-安置区对应关系表", "|#|", 0);
+            DataTable dt = importTool.ExcelToDataTable(xlsPath + fileName, sheetName);
+            dataGridViewX1.DataSource = dt;
+            MessageBox.Show("Success");
+            //------------------测试----------------------------
+        
+
+
+            //TIFF tif = new TIFF();
+            //tif.StartPosition = FormStartPosition.CenterScreen;
+            //tif.Show();
         }
     }
     public abstract class SplashScreenApplicationContext : ApplicationContext
