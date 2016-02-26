@@ -32,6 +32,7 @@ namespace SuperMapTool
         public String information;//定义返回信息
         public int i = 0;//定义计数器：导入shp计数
         public string mo;//定义全局变量：模板路径
+       
         /// <summary>
         /// 初始化
         /// </summary>
@@ -47,10 +48,11 @@ namespace SuperMapTool
         ///udb中导入shp
         /// </summary>
         /// <param name="importPath"></param>
-        public void ImportShp(string importPath, DatasourceConnectionInfo info)
+        public string  ImportShp(string importPath, DatasourceConnectionInfo info)
         {
             try
             {
+                string name = importPath.Substring(importPath.LastIndexOf("\\")+1);
                 //wks.Datasources.Open(info);
                 // 1. 构建数据源连接对象。 // info.Database = @"G:\数据转换\测试数据\Test\text.udb";数据库型
                 //DatasourceConnectionInfo info = new DatasourceConnectionInfo();
@@ -69,13 +71,17 @@ namespace SuperMapTool
                 settings.Add(importSettingSHP);
                 ImportResult dd = import1.Run();
                 i++;
+                if (dd.FailedSettings.Length != 0)
+                    return "【shp数据导入】" + name + "导入失败！请检查数据是否含有有效记录。\t\n";
+                return null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return null;
             }
         }
-        public void ImportCSV(string targetName,string importPath, DatasourceConnectionInfo info)
+        public string  ImportCSV(string targetName,string importPath, DatasourceConnectionInfo info)
         {
             try
             {
@@ -88,21 +94,26 @@ namespace SuperMapTool
                 DataImport import1 = new DataImport();
                 import1.ImportSettings.Add(importSettingCSV);
                 ImportResult dd= import1.Run();//.GetSucceedDatasetNames(importSettingCSV);
-                
+                if(dd.FailedSettings.Length!=0)
+                   return "【属性表导入】"+targetName+"导入失败！请检查数据是否含有有效记录。\t\n";
+                return null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return null;
             }
         }
         /// <summary>
         /// udb中导入tiff
         /// </summary>
         /// <param name="importPath"></param>
-        public void ImportTIFF(string importPath, DatasourceConnectionInfo info)
+        public string  ImportTIFF(string importPath, DatasourceConnectionInfo info)
         {
             try
             {
+                string name = importPath.Substring(importPath.LastIndexOf("\\") + 1);
+
                 // 1. 构建数据源连接对象。
                 //DatasourceConnectionInfo info = new DatasourceConnectionInfo();
                 //info.Server = sourceUDB;
@@ -126,13 +137,21 @@ namespace SuperMapTool
                 DataImport import1 = new DataImport();
                 ImportSettings settings = import1.ImportSettings;
                 settings.Add(importSettingTIF);
-                import1.Run();
+                ImportResult dd= import1.Run();
                 i++;
+                if (dd.FailedSettings.Length != 0)
+                    return "【tif数据导入】" + name + "导入失败！请检查数据是否有效。\t\n";
+                return null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return null;
             }
+        }
+        public void failedMessage(string targetPath)
+        {
+           
         }
         public void ImportTIFFTest(string importPath, string sourceUDB)
         {
@@ -635,8 +654,13 @@ namespace SuperMapTool
                 OXL.DisplayAlerts = false;
                 workbooks = OXL.Workbooks;
                 mWorkbook = workbooks.Open(SourceExcelPathAndName, 0, false, 5, "", "", false, XlPlatform.xlWindows, "", true, false, 0, true, false, false);
+                //mWorkbook = workbooks.Open(SourceExcelPathAndName, Type.Missing, 
+                    //Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                    //XlPlatform.xlWindows, Type.Missing, Type.Missing, Type.Missing,
+                    //Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 mWorkSheets = mWorkbook.Worksheets;
                 mWSheet = (Worksheet)mWorkSheets.get_Item(excelSheetName);
+                Microsoft.Office.Interop.Excel.Range range1 = mWSheet.UsedRange;
                 Microsoft.Office.Interop.Excel.Range range = mWSheet.UsedRange;
                 Microsoft.Office.Interop.Excel.Range rngCurrentRow;
                 for (int i = 0; i < headerRowsToSkip; i++)
@@ -644,6 +668,7 @@ namespace SuperMapTool
                     rngCurrentRow = range.get_Range("A1", Type.Missing).EntireRow;
                     rngCurrentRow.Delete(XlDeleteShiftDirection.xlShiftUp);
                 }
+
                 range.Replace("\n", "", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 range.Replace(",", columnDelimeter, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
                 mWorkbook.SaveAs(targetCSVPathAndName, Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
@@ -676,6 +701,53 @@ namespace SuperMapTool
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             }
+        }
+        /// <summary>
+        /// 执行过程中可能会打开多个EXCEL文件 所以杀掉
+        /// </summary>
+        private static void QuertExcel()
+        {
+            Process[] excels = Process.GetProcessesByName("EXCEL");
+            foreach (var item in excels)
+            {
+                item.Kill();
+            }
+        }
+        /// <summary>
+        /// 将xls文件转换为csv文件
+        /// </summary>
+        /// <param name="FilePath">文件全路路径</param>
+        /// <returns>返回转换后的csv文件名</returns>
+        public  string XLSSavesaCSV(string FilePath)
+        {
+            
+            QuertExcel();
+            string _NewFilePath = "";
+
+            Microsoft.Office.Interop.Excel.Application excelApplication;
+            Microsoft.Office.Interop.Excel.Workbooks excelWorkBooks = null;
+            Microsoft.Office.Interop.Excel.Workbook excelWorkBook = null;
+            Microsoft.Office.Interop.Excel.Worksheet excelWorkSheet = null;
+
+            try
+            {
+                excelApplication = new Microsoft.Office.Interop.Excel.ApplicationClass();
+                excelWorkBooks = excelApplication.Workbooks;
+                excelWorkBook = ((Microsoft.Office.Interop.Excel.Workbook)excelWorkBooks.Open(FilePath, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing));
+                excelWorkSheet = (Microsoft.Office.Interop.Excel.Worksheet)excelWorkBook.Worksheets[1];
+                excelApplication.Visible = false;
+                excelApplication.DisplayAlerts = false;
+                _NewFilePath = FilePath.Replace(".xls", ".csv");
+                // excelWorkSheet._SaveAs(FilePath, Excel.XlFileFormat.xlCSVWindows, Missing.Value, Missing.Value, Missing.Value,Missing.Value,Missing.Value, Missing.Value, Missing.Value);
+                excelWorkBook.SaveAs(_NewFilePath, Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                QuertExcel();
+                //ExcelFormatHelper.DeleteFile(FilePath);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception(exc.Message);
+            }
+            return _NewFilePath;
         }
         //测试转csv
         public bool toCSVTest( string excelPath , string csvPath )
