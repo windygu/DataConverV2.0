@@ -170,13 +170,20 @@ namespace DataConver
                 string shpFilePath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据";
                 string shpFileName = "ymss1";//;
                 string SavaPath = @"D:\移动风险监测\新数据测试数据\tiffPath\ymss1";
+                string s1 = @"D:\移动风险监测\新数据测试数据\tiffPath\ymss1\shp文件";
+                string n1 = "time1.shp";
+                string s2 = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.3影响分析支撑数据\";
+                string n2 = "czLayer.shp";
+                //IntersectFeature(gp,s2,n1,n2,s1,@"D:\测试\ceshi.shp");
+                string shpTestPath=@"D:\移动风险监测\新数据测试数据\tiffPath\shp";
                 //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();
                 //Feature2Raster(gp,shpFilePath+"\\"+shpFileName+".shp", SavaPath+"\\time.tif");
                 //JoinPoint(gp, shpFilePath+"\\", shpFileName, "czLayer","ymcz");
 
                 //MessageBox.Show(caculateCountry("ymcz", shpFilePath).ToString());
                 //MessageBox.Show(Caculate(shpFileName, shpFilePath, "GRIDAREA").ToString());
-                 readTXT(txtPath, shpFilePath, shpFileName, SavaPath);
+                ymStatistics(gp, shpTestPath, s2+n2);
+                //readTXT(txtPath, shpFilePath, shpFileName, SavaPath);
                 MessageBox.Show(ExecDateDiff(dt1, DateTime.Now));
                //setValue("ymss1", @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据", value);
 
@@ -835,7 +842,7 @@ namespace DataConver
                             //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();shpFilePath+"\\"+shpFileName+".shp",
                             //Feature2Raster(gp, setValue(shpFileName, shpFilePath, hs),SavaPath+"\\time" +line[line.Count-2] + ".tif");
                             Feature2Raster(gp, selectFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), importTool.createFolder(SavaPath + "\\shp文件"), "time" + line[line.Count - 2] + ".shp"), SavaPath + "\\time" + line[line.Count - 2] + ".tif");
-
+                           
                             //CopyFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), SavaPath + "\\time" + line[line.Count - 2] + ".shp");
                         
                         }
@@ -862,6 +869,33 @@ namespace DataConver
                 MessageBox.Show(ex.Message);
             }
             //return hs;
+        }
+        //批量统计函数
+        public void ymStatistics(Geoprocessor gp,string StaShpPath,string czShpLayer)
+        {
+            List<double> areaSta=new List<double>();
+            List<int> czSta=new List<int>() ;
+            DirectoryInfo Di=new DirectoryInfo(StaShpPath);
+            try
+            {
+                DateTime dt=DateTime.Now;
+                foreach(FileInfo file in Di.GetFiles("*.shp",SearchOption.TopDirectoryOnly) )
+                {
+
+                    //面积统计
+                    areaSta.Add( Caculate(file.Name,file.DirectoryName,"GRIDAREA"));
+                    //村庄统计
+                    importTool.createFolder(file.DirectoryName+"\\czStastic");
+                    IntersectFeature(gp,file.DirectoryName,file.Name,czShpLayer,file.DirectoryName+"\\czStastic\\ymcz"+file.Name);
+                    czSta.Add( caculateCountry(file.DirectoryName+"\\czStastic","ymcz"+file.Name));
+                }
+                MessageBox.Show(ExecDateDiff(dt, DateTime.Now)+"\n\t"+czSta.Count.ToString()+"\n\t"+areaSta.Count.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         //获取批量处理的Itable
         public ITable getTableAfterSetValue(string shpFileName, string shpFilePath,Hashtable hsTable )
@@ -1130,12 +1164,15 @@ namespace DataConver
             }
         }
         //copy要素赋值
-        public void IntersectFeature(Geoprocessor gp, string sourseFeature,string aimFeature)
+        public void IntersectFeature(Geoprocessor gp,string  sourseFeature1, string n1,string  sourseFeature2Name,  string SavaFeature)
         {
             try
             {
                 ESRI.ArcGIS.AnalysisTools.Intersect intersectFeatures = new Intersect();
-
+                intersectFeatures.in_features = sourseFeature1 +"\\"+n1+ ";" + sourseFeature2Name;
+                intersectFeatures.out_feature_class = SavaFeature;
+                intersectFeatures.output_type = "POINT";
+                gp.OverwriteOutput = true;
                 gp.Execute(intersectFeatures, null);
             }
             catch (Exception ex)
@@ -1213,13 +1250,13 @@ namespace DataConver
             }
         }
         //村庄点面叠置统计
-        public Double caculateCountry(string shpFileName, string shpFilePath)
+        public int caculateCountry(string shpFilePath,string shpFileName )
         {
             try
             {
                 IFeatureClass pFeatureClass= shpToFeatureClass(shpFileName, shpFilePath);
                 ITable pTable = (ITable)pFeatureClass;
-                double count = pTable.RowCount(null);
+                int count = pTable.RowCount(null);
                 return count;
 
             }
