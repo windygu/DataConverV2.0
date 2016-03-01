@@ -714,27 +714,27 @@ namespace DataConver
         private void barButtonItem7_ItemClick_1(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             //------------------测试-----------------------------
-            string xlsPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\";
-            string fileName =  "6.4避洪转移展示支撑数据 .xls"; //"6.3影响分析支撑数据.xls";//"6.1查询业务支撑数据.xls";//
-            string sheetName = "6.4.1转移单元-转移路线-安置区对应关系表";
-           //生成csv
-            string[] sheetNameList = importTool.GetSheetNameList(xlsPath + fileName);
+            //string xlsPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\";
+           // string fileName =  "6.4避洪转移展示支撑数据 .xls"; //"6.3影响分析支撑数据.xls";//"6.1查询业务支撑数据.xls";//
+           // string sheetName = "6.4.1转移单元-转移路线-安置区对应关系表";
+           ////生成csv
+            //string[] sheetNameList = importTool.GetSheetNameList(xlsPath + fileName);
 
-            importTool.ExcelToCsv(xlsPath + fileName, xlsPath + sheetNameList[0] + "_Attr.csv", sheetNameList[0], "|#|", 1);
-            //导入csv
+            //importTool.ExcelToCsv(xlsPath + fileName, xlsPath + sheetNameList[0] + "_Attr.csv", sheetNameList[0], "|#|", 1);
+            ////导入csv
             // importTool.toCSVTest(xlsPath + fileName, xlsPath + "bhzyAttr.csv");
 
            // string mm=importTool.XLSSavesaCSV(xlsPath + fileName);
             //DataTable dt = importTool.ExcelToDataTable(xlsPath + fileName, sheetNameList[1]);
             //dataGridViewX1.DataSource = dt;
-            MessageBox.Show("Success");
+            //MessageBox.Show("Success");
             //------------------测试----------------------------
-        
 
 
-            //TIFF tif = new TIFF();
-            //tif.StartPosition = FormStartPosition.CenterScreen;
-            //tif.Show();
+
+            TIFF tif = new TIFF();
+            tif.StartPosition = FormStartPosition.CenterScreen;
+            tif.Show();
         }
     }
     public abstract class SplashScreenApplicationContext : ApplicationContext
