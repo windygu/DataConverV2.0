@@ -318,14 +318,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DataConver.exe" size="1807360">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DataConver.exe" size="1814528">
       <assemblyIdentity name="DataConver" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Gapbev1bzw/r4EsoYYBfJw+15mc=</dsig:DigestValue>
+        <dsig:DigestValue>ycQks0WfoQXeAcpBboQRFCPCfoA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -2321,13 +2321,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="DataConver.exe.config" size="161">
+  <file name="DataConver.exe.config" size="158">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>XhmNWIUSMbaVlaWABznwa4dcyj0=</dsig:DigestValue>
+      <dsig:DigestValue>G5inYVx9MX6YO6/wAgEQ8Qp6Z74=</dsig:DigestValue>
     </hash>
   </file>
   <file name="map.ico" size="17542">

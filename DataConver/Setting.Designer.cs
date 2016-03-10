@@ -85,10 +85,12 @@
             this.expandablePanel1.Cursor = System.Windows.Forms.Cursors.Default;
             this.expandablePanel1.DisabledBackColor = System.Drawing.Color.Empty;
             this.expandablePanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.expandablePanel1.Expanded = false;
+            this.expandablePanel1.ExpandedBounds = new System.Drawing.Rectangle(0, 27, 551, 206);
             this.expandablePanel1.HideControlsWhenCollapsed = true;
-            this.expandablePanel1.Location = new System.Drawing.Point(0, 27);
+            this.expandablePanel1.Location = new System.Drawing.Point(0, 207);
             this.expandablePanel1.Name = "expandablePanel1";
-            this.expandablePanel1.Size = new System.Drawing.Size(551, 206);
+            this.expandablePanel1.Size = new System.Drawing.Size(551, 26);
             this.expandablePanel1.Style.Alignment = System.Drawing.StringAlignment.Center;
             this.expandablePanel1.Style.BackColor1.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this.expandablePanel1.Style.BackColor2.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
@@ -120,7 +122,7 @@
             this.panelEx3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelEx3.Location = new System.Drawing.Point(0, 26);
             this.panelEx3.Name = "panelEx3";
-            this.panelEx3.Size = new System.Drawing.Size(551, 180);
+            this.panelEx3.Size = new System.Drawing.Size(551, 0);
             this.panelEx3.Style.Alignment = System.Drawing.StringAlignment.Center;
             this.panelEx3.Style.BackColor1.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground;
             this.panelEx3.Style.BackColor2.ColorSchemePart = DevComponents.DotNetBar.eColorSchemePart.PanelBackground2;
@@ -204,7 +206,7 @@
             // 
             this.but_model.AccessibleRole = System.Windows.Forms.AccessibleRole.PushButton;
             this.but_model.ColorTable = DevComponents.DotNetBar.eButtonColor.OrangeWithBackground;
-            this.but_model.Location = new System.Drawing.Point(462, 23);
+            this.but_model.Location = new System.Drawing.Point(463, 23);
             this.but_model.Name = "but_model";
             this.but_model.Size = new System.Drawing.Size(58, 23);
             this.but_model.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;

@@ -112,7 +112,7 @@ namespace DataConver
                 if (dataPath.Substring(dataPath.Length - 3) == "已处理")
                     return;//判断该编制单元是否被处理，是则返回，不是则继续执行
                 di = new DirectoryInfo(dataPath);
-                FileInfo[] information = di.GetFiles("基本信息.txt",SearchOption.AllDirectories);
+                FileInfo[] information = di.GetFiles("*信息.txt",SearchOption.AllDirectories);
                 FileInfo[] yuanData = di.GetFiles("元数据.xml", SearchOption.AllDirectories);
                 
                 //成果图的获取
@@ -123,7 +123,21 @@ namespace DataConver
                 //checkPath(mxd[0].FullName);
                 //设置淹没过程影像文件路径
                 DirectoryInfo[] tiff1 = di.GetDirectories("tiffPath", SearchOption.AllDirectories);
-                tiff = tiff1[0].FullName;
+                if (tiff1.Length > 0)
+                    tiff = tiff1[0].FullName;
+                else
+                {
+                    if (MessageBox.Show("未找到淹没过程数据，是否即时生成？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        TIFF tif = new TIFF(dataPath);
+                        tif.StartPosition = FormStartPosition.CenterScreen;
+                        tif.TopMost = true;
+                        tif.Show();
+                        return;
+                    }
+                    else
+                        return;
+                }
                 
                 
                 MessageShow.Clear();
@@ -146,6 +160,7 @@ namespace DataConver
                 
 
                 DateTime dt1 = DateTime.Now;
+                //ymgcImport(outPath_Final, tiff);
                //ImportMapModel(mod, outPath_Final + "\\" + "MapResult", outPath_Final, set.mod);
 
                 //bhzy(outPath_Mid, outPath_Final);
@@ -166,25 +181,23 @@ namespace DataConver
                //MessageShow.SaveFile(outPath_Final + "_错误日志1.txt", RichTextBoxStreamType.TextTextOleObjs);
                 //yxfx(dataPath, outPath_Final);
                 //Feature2Raster(gp, @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\ymss1.shp", @"D:\移动风险监测\新数据测试数据\tiffPath\time1.tif");
-                string txtPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\ssgc1.txt";
+                //string txtPath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\time1.txt";
                 string shpFilePath = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据";
                 string shpFileName = "ymss1";//;
-                string SavaPath = @"D:\移动风险监测\新数据测试数据\tiffPath\ymss1";
-                string s1 = @"D:\移动风险监测\新数据测试数据\tiffPath\ymss1\shp文件";
-                string n1 = "time1.shp";
-                string s2 = @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.3影响分析支撑数据\";
-                string n2 = "czLayer.shp";
-                //IntersectFeature(gp,s2,n1,n2,s1,@"D:\测试\ceshi.shp");
-                string shpTestPath=@"D:\移动风险监测\新数据测试数据\tiffPath\shp";
+                //ceshiSelect(shpFileName, shpFilePath);
+                //string SavaPath = @"D:\移动风险监测\新数据测试数据\tiffPath\ymss1";
                 //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();
                 //Feature2Raster(gp,shpFilePath+"\\"+shpFileName+".shp", SavaPath+"\\time.tif");
                 //JoinPoint(gp, shpFilePath+"\\", shpFileName, "czLayer","ymcz");
 
                 //MessageBox.Show(caculateCountry("ymcz", shpFilePath).ToString());
                 //MessageBox.Show(Caculate(shpFileName, shpFilePath, "GRIDAREA").ToString());
-                ymStatistics(gp, shpTestPath, s2+n2);
+                //DataTable dTable=ymStatistics(tiff,@"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据\copy\czLayer.shp");
+                //dataTableToCsv(dTable, @"D:\1.xls"); //调用函数
+
+                //System.Diagnostics.Process.Start(@"D:\1.xls"); //打开excel文件
                 //readTXT(txtPath, shpFilePath, shpFileName, SavaPath);
-                MessageBox.Show(ExecDateDiff(dt1, DateTime.Now));
+                //MessageBox.Show(ExecDateDiff(dt1, DateTime.Now));
                //setValue("ymss1", @"D:\移动风险监测\新数据测试数据\6风险图应用业务相关数据\6.2淹没过程动态展示支撑数据", value);
 
                 /*tlab_progress.Text = "【" + fxtb + "】正在导入避洪转移数据···";
@@ -212,7 +225,7 @@ namespace DataConver
                 
  //----------------------------------------------------------------------------------
               
-//----------------------------------------------------------------------------------------
+//--------------------提取数据--------------------------------------------------------------------
                 Msg(lab_progress.Text = "【" + fxtb + "】正在进行数据转换···");
                 axMapControl.LoadMxFile(mxd[0].FullName, 0, Type.Missing);
                 //提取数据函数调用
@@ -223,8 +236,8 @@ namespace DataConver
                
                 //System.Threading.Thread.Sleep(100);
                 Msg(lab_progress.Text = "【" + fxtb + "】正在导入淹没过程影像数据···");
-               //淹没过程影像数据导入
-                //ymgcImport(outPath_Final, SavaPath);
+               //淹没过程影像数据导入//savapath  是栅格数据存放位置
+                ymgcImport(outPath_Final, tiff);
                 //lab_progress.Text = "【" + fxtb + "】淹没过程影像数据导入完成";
                 //System.Threading.Thread.Sleep(100);
 //----------------------------------------------------------------------------------------
@@ -268,7 +281,7 @@ namespace DataConver
                 try
                 {
 
-                    FileInfo[] xlsPath = di.GetFiles("*影响分析支撑数据*.xls*", SearchOption.AllDirectories);
+                    FileInfo[] xlsPath = di.GetFiles("*数据*.xls*", SearchOption.TopDirectoryOnly);
                     foreach (FileInfo xx in xlsPath)
                     {
                         ConnectAttribute(xx.FullName, outPath_Final + "\\" + "yxfx");
@@ -321,7 +334,7 @@ namespace DataConver
                // Msg("错误日志已生成");
                 
                 lab_progress.Text = "【" + fxtb + "】处理完成";
-                Directory.Move(dataPath, dataPath + "_已处理");
+                //Directory.Move(dataPath, dataPath + "_已处理");
                 //System.Threading.Thread.Sleep(1000);//等待一秒；
             }
             catch (Exception ex)
@@ -377,7 +390,7 @@ namespace DataConver
             try
             {
                 //pFeatureLayer = GetFeatureLayer(LayerName);
-                if (pFeatureLayer.DataSourceType == "File Geodatabase Feature Class")
+                if (pFeatureLayer.DataSourceType == "File Geodatabase Feature Class" || pFeatureLayer.DataSourceType=="文件地理数据库要素类")//修改数据类型
                 {
                     IFeatureClass fc = pFeatureLayer.FeatureClass;
                     string name1 = fc.AliasName;
@@ -403,7 +416,7 @@ namespace DataConver
             try
             {
                 //IRasterLayer pRasterLayer = GetRasterLayer(LayerName);
-                return pRasterLayer.FilePath.Substring(0, pRasterLayer.FilePath.LastIndexOf("\\"));
+                return pRasterLayer.FilePath;//陈杜彬修改.Substring(0, pRasterLayer.FilePath.LastIndexOf("\\"));
             }
             catch (Exception ex)
             {
@@ -415,8 +428,10 @@ namespace DataConver
         private void ExtractFeatureClass(string LayerName,Geoprocessor gp, string aimPath, string sourcePath)
         {
             Msg("开始处理..."+LayerName );
+            
             try
             {
+                
                 ESRI.ArcGIS.DataManagementTools.CopyFeatures copyFeature = new CopyFeatures();
                 copyFeature.in_features = sourcePath;
                 copyFeature.out_feature_class = aimPath + "\\" + LayerName;
@@ -431,12 +446,15 @@ namespace DataConver
             }
 
         }
-        //提取矢量数据
+        //提取栅格数据
         private void ExtractRaster(string LayerName,Geoprocessor gp, string aimPath, string sourcePath)
         {
             Msg("开始处理..." + LayerName);
+            string RasterName = sourcePath.Substring(sourcePath.LastIndexOf("\\") + 1);
             try
             {
+                if (RasterName.Substring(0,4).Equals("Band"))
+                    sourcePath = sourcePath.Substring(0, sourcePath.LastIndexOf("\\"));//陈杜彬 3.8修改
                 ESRI.ArcGIS.DataManagementTools.CopyRaster copyRaster = new CopyRaster();
                 copyRaster.in_raster = sourcePath;
                 copyRaster.out_rasterdataset = aimPath + "\\" + LayerName + ".tif";
@@ -450,7 +468,21 @@ namespace DataConver
                 //MessageBox.Show(ex.Message);
             }
         }
-     
+        private void copyRaster(Geoprocessor gp, string SavaPath, string sourcePath)
+        {
+           try
+            {
+                ESRI.ArcGIS.DataManagementTools.CopyRaster copyRaster = new CopyRaster();
+                copyRaster.in_raster = sourcePath;
+                copyRaster.out_rasterdataset = SavaPath;//可以是文件全路径
+                gp.OverwriteOutput = true;
+                gp.Execute(copyRaster, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
  //---------------各个udb的导入函数-----------------------------------------------------------------------
         //水利工程导入函数
         private void slgcImport(string outPath_Final, string outPath_Mid)
@@ -547,12 +579,19 @@ namespace DataConver
         public void ymgcImport(string outPath_Final,string ymgc_path)
         {
             try
-            {
-                //DatasourceConnectionInfo info = CreatUDB(outPath_Final, "ztdt", set.passWod);
-                DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-                info.Password = set.passWod;
-                info.Server = outPath_Final + "\\" + "ymgc1.udb";
-                DataImport("*.shp", "*.tif", ymgc_path, info);
+            {   
+                //生成淹没过程数据存放在txt名字命名的文件夹下即tiffPath---ymgcX
+                //tiffpath 中肯定会有很多个淹没过程信息  然后用foreach来逐个的导入
+                DirectoryInfo tifDi = new DirectoryInfo(ymgc_path);
+                foreach (DirectoryInfo ymgcX in tifDi.GetDirectories())
+                {
+                    //DatasourceConnectionInfo info = CreatUDB(outPath_Final, "ztdt", set.passWod);
+                    //string udbName = ymgc_path.Substring(ymgc_path.LastIndexOf("\\") + 1);
+                    DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+                    info.Password = set.passWod;
+                    info.Server = outPath_Final + "\\" + ymgcX.Name + ".udb";
+                    DataImport(" ", "*.tif", ymgcX.FullName+"\\", info);
+                }
                 wks.Datasources.CloseAll();
             }
             catch (Exception ex)
@@ -582,6 +621,7 @@ namespace DataConver
         {
             try
             {
+
                 datetime = DateTime.Now;
                 //创建数据源
                 di = new DirectoryInfo(bhzy_path);
@@ -590,7 +630,10 @@ namespace DataConver
                 info.Password = set.passWod;
                 info.Server = outPath_Final + "\\" + "bhzy.udb";
                 FileInfo[] info_file = bhzyPath[0].GetFiles("*.shp", SearchOption.AllDirectories);
-                max = info_file.Length; int p = 0;
+                max = info_file.Length;
+                if (max == 0)
+                    return;//陈杜彬 3.8 修改
+                int p = 0;
                 foreach (FileInfo NextFolder in info_file)//"*.shp",
                 {
                     failedRecord += importTool.ImportShp(NextFolder.FullName, info);
@@ -633,6 +676,8 @@ namespace DataConver
                         }
                     }
                 }
+                else
+                    Msg("数据不存在···");//陈杜彬3.8 修改
             }
             catch (Exception ex)
             {
@@ -670,7 +715,11 @@ namespace DataConver
 
             try
             {
-
+                if (!System.IO.Directory.Exists(sourPath))
+                {
+                    Msg("无此数据。");
+                    return;
+                }
                 datetime = DateTime.Now;
                 List<string> shp = importTool.getAllFileName(sourPath, type1);
                 int p = 0;
@@ -776,7 +825,7 @@ namespace DataConver
                     {
                         IFeatureLayer l  = layer as IFeatureLayer;
                         IRasterLayer r = layer as IRasterLayer;
-                        if (plan != null)
+                        if (plan != null&&plan.Substring(0,2)!="方案")//修改方案名字
                         {
                             layer.Name = plan+layer.Name;
                         }
@@ -832,17 +881,17 @@ namespace DataConver
                 {
                     string[] split = l.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     
-                    if (l.Length < 17)
+                    if (split.Length < 2)//陈杜彬3.7修改 
                     {
                         line.Add(split[0]);
                         if (hs != null)
                         {
-                            lab_progress.Text = "正在生成time" + line[line.Count - 2] + ".tif·····";
+                            progressBar.EditValue = lab_progress.Text = "正在生成time" + line[line.Count - 2] + ".tif·····";
                             
                             //ESRI.ArcGIS.ADF.COMSupport.AOUninitialize.Shutdown();shpFilePath+"\\"+shpFileName+".shp",
                             //Feature2Raster(gp, setValue(shpFileName, shpFilePath, hs),SavaPath+"\\time" +line[line.Count-2] + ".tif");
                             Feature2Raster(gp, selectFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), importTool.createFolder(SavaPath + "\\shp文件"), "time" + line[line.Count - 2] + ".shp"), SavaPath + "\\time" + line[line.Count - 2] + ".tif");
-                           
+
                             //CopyFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), SavaPath + "\\time" + line[line.Count - 2] + ".shp");
                         
                         }
@@ -856,13 +905,13 @@ namespace DataConver
                         hs.Add(key, value);//将读取的txt数值存入
                         
                 }
-                lab_progress.Text = "正在生成time" + line[line.Count - 1] + ".tif·····";
+                progressBar.EditValue = lab_progress.Text = "正在生成time" + line[line.Count - 1] + ".tif·····";
                 
                //SetValue(shpFileName, shpFilePath, hs);//shpFilePath + "\\" + shpFileName+".shp",
                 //CopyFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), SavaPath + "\\time" + line[line.Count - 1] + ".shp");
                 Feature2Raster(gp, selectFeatureClass(gp, setValue(shpFileName, shpFilePath, hs), importTool.createFolder(SavaPath + "\\shp文件"), "time" + line[line.Count - 1] + ".shp"), SavaPath + "\\time" + line[line.Count - 1] + ".tif");
                 //getFeatureClass(setValue(shpFileName, shpFilePath, hs));
-                lab_progress.Text = "淹没过程影像数据生成完成！";
+                progressBar.EditValue = lab_progress.Text = "淹没过程影像数据生成完成！";
             }
             catch (Exception ex)
             {
@@ -871,26 +920,118 @@ namespace DataConver
             //return hs;
         }
         //批量统计函数
-        public void ymStatistics(Geoprocessor gp,string StaShpPath,string czShpLayer)
-        {
-            List<double> areaSta=new List<double>();
-            List<int> czSta=new List<int>() ;
-            DirectoryInfo Di=new DirectoryInfo(StaShpPath);
-            try
+        public DataTable  ymStatistics( string StaShpPath, string czShpLayer)
+        { try
             {
-                DateTime dt=DateTime.Now;
-                foreach(FileInfo file in Di.GetFiles("*.shp",SearchOption.TopDirectoryOnly) )
+            DataTable dtable = new DataTable();
+            dtable.Columns.Add("Time", System.Type.GetType("System.String"));
+            dtable.Columns.Add("ymczCount（个）", System.Type.GetType("System.String"));
+            dtable.Columns.Add("ymczArea（平方公里）", System.Type.GetType("System.String"));
+            Hashtable areaStaHs = new Hashtable();
+            Hashtable czStaHs = new Hashtable();
+            List<double> areaSta = new List<double>();
+            List<int> czSta = new List<int>();
+            List<string> TimeX=new List<string>();//3.8修改添加  记录时刻
+            DirectoryInfo Di = new DirectoryInfo(StaShpPath);//测试+"\\shp"
+           
+                DateTime dtime = DateTime.Now;
+                foreach (FileInfo file in Di.GetFiles("*.shp", SearchOption.TopDirectoryOnly))
+                {
+                    object keyName = file.Name.Substring(0, file.Name.Length - 4);
+                    TimeX.Add(keyName.ToString());
+                    progressBar.EditValue=lab_progress.Text = "正在统计" + file.Name.Substring(0, file.Name.Length - 4) + "·····";
+                    //面积统计
+                    //areaSta.Add(Caculate(file.Name, file.DirectoryName, "GRIDAREA"));
+                    object AreaValue = Caculate(file.Name, file.DirectoryName, "GRIDAREA") / 1000000;//单位平方公里
+                    areaStaHs.Add(keyName, AreaValue);
+                    //村庄统计
+                    importTool.createFolder(file.DirectoryName + "\\czStastic");
+                    IntersectFeature(gp, file.DirectoryName, file.Name, czShpLayer, file.DirectoryName + "\\czStastic\\ymcz" + file.Name);
+                    //czSta.Add(caculateCountry(file.DirectoryName + "\\czStastic", "ymcz" + file.Name));
+                    object czValue = caculateCountry(file.DirectoryName + "\\czStastic", "ymcz" + file.Name);
+                    czStaHs.Add(keyName,czValue);
+                    progressBar.EditValue=lab_progress.Text = "完成统计保存结果";
+                    progressBar.Properties.Stopped = true;
+                }
+                MessageBox.Show("用时：" + ExecDateDiff(dtime, DateTime.Now));
+                //这里要加入将信息表导入指定数据集
+                for (int i = 0; i < czStaHs.Count; i++)
+                {
+                    DataRow dr1 = dtable.NewRow();
+                    dtable.Rows.Add(dr1);
+
+                    dtable.Rows[i]["Time"] = TimeX[i];//"time" + (i + 1).ToString();
+                    dtable.Rows[i]["ymczCount（个）"] = czStaHs[TimeX[i]].ToString();//异常问题,解决
+                    dtable.Rows[i]["ymczArea（平方公里）"] = areaStaHs[TimeX[i]].ToString();
+                }
+                dataTableToCsv(dtable, StaShpPath+"\\淹没统计.xls");
+                System.Diagnostics.Process.Start(StaShpPath + "\\淹没统计.xls"); //打开excel文件
+                    return dtable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        private void dataTableToCsv(DataTable table, string file)
+        {
+
+            string title = "";
+
+            System.IO.FileStream fs = new System.IO.FileStream(file, FileMode.OpenOrCreate);
+
+            //FileStream fs1 = File.Open(file, FileMode.Open, FileAccess.Read);
+
+            StreamWriter sw = new StreamWriter(new BufferedStream(fs), System.Text.Encoding.Default);
+
+            for (int i = 0; i < table.Columns.Count; i++)
+            {
+
+                title += table.Columns[i].ColumnName + "\t"; //栏位：自动跳到下一单元格
+
+            }
+
+            title = title.Substring(0, title.Length - 1) + "\n";
+
+            sw.Write(title);
+
+            foreach (DataRow row in table.Rows)
+            {
+
+                string line = "";
+
+                for (int i = 0; i < table.Columns.Count; i++)
                 {
 
-                    //面积统计
-                    areaSta.Add( Caculate(file.Name,file.DirectoryName,"GRIDAREA"));
-                    //村庄统计
-                    importTool.createFolder(file.DirectoryName+"\\czStastic");
-                    IntersectFeature(gp,file.DirectoryName,file.Name,czShpLayer,file.DirectoryName+"\\czStastic\\ymcz"+file.Name);
-                    czSta.Add( caculateCountry(file.DirectoryName+"\\czStastic","ymcz"+file.Name));
-                }
-                MessageBox.Show(ExecDateDiff(dt, DateTime.Now)+"\n\t"+czSta.Count.ToString()+"\n\t"+areaSta.Count.ToString());
+                    line += row[i].ToString().Trim() + "\t"; //内容：自动跳到下一单元格
 
+                }
+
+                line = line.Substring(0, line.Length - 1) + "\n";
+
+                sw.Write(line);
+
+            }
+
+            sw.Close();
+
+            fs.Close();
+
+
+
+            
+        }
+        public void IntersectFeature(Geoprocessor gp, string sourseFeature1, string n1, string sourseFeature2Name, string SavaFeature)
+        {
+            try
+            {
+                ESRI.ArcGIS.AnalysisTools.Intersect intersectFeatures = new Intersect();
+                intersectFeatures.in_features = sourseFeature1 + "\\" + n1 + ";" + sourseFeature2Name;
+                intersectFeatures.out_feature_class = SavaFeature;
+                intersectFeatures.output_type = "POINT";
+                gp.OverwriteOutput = true;
+                gp.Execute(intersectFeatures, null);
             }
             catch (Exception ex)
             {
@@ -955,7 +1096,6 @@ namespace DataConver
                 {
                     //ITable table = (ITable)pFeatureClass;
                     //table.UpdateSearchedRows(pFilter,new IRowBuffer());
-                   
                     IFeature pFeature= pFeatureClass.Search(pFilter,true).NextFeature();
                     if(pFeature!=null)
                     {
@@ -1060,6 +1200,97 @@ namespace DataConver
             }
             //获取shpfile对象
         }
+
+        public void ceshiSelect(string shpFileName, string shpFilePath)
+        {
+            try
+            {
+                IWorkspaceFactory pWorkspaceFactory = new ShapefileWorkspaceFactoryClass();
+                IFeatureWorkspace pFeatureWorkspace = (IFeatureWorkspace)pWorkspaceFactory.OpenFromFile(shpFilePath, 0);
+                IFeatureLayer pFeatureLayer = new FeatureLayerClass();
+                pFeatureLayer.FeatureClass = pFeatureWorkspace.OpenFeatureClass(shpFileName);
+                //使要素处于编辑状态
+                IFeatureClass pFeatureClass = pFeatureLayer.FeatureClass;
+                IDataset dataset = (IDataset)pFeatureClass;
+                //ITable tb = (ITable)pFeatureClass;
+                IWorkspace workspace = dataset.Workspace;
+                IWorkspaceEdit workspaceEdit = (IWorkspaceEdit)workspace;
+                //workspaceEdit.StartEditing(true);
+                workspaceEdit.StartEditOperation();
+                
+              //CopyFeatureClass(gp,  selectfeature(pFeatureLayer,"VALUE>5"),@"D:\测试\searchResult.shp");
+                //selectfeature(pFeatureLayer, "VALUE>5");
+                IQueryFilter pQueryFilter = new QueryFilterClass();
+                IFeatureCursor pFeatureCursor = pFeatureLayer.Search(pQueryFilter, true);
+                IFeature pFeature = pFeatureCursor.NextFeature();
+                // while (pFeature != null)//遍历线图层的name，将线图层中的name和点图层中的lineName加入选择集并对两个选择集进行near，勾选location生成nearX和nearY
+                // {
+                IFeatureSelection featureSelection = pFeatureLayer as IFeatureSelection;
+
+                //string name = pFeature.get_Value(2).ToString();//线图层的name字段
+                pQueryFilter.WhereClause = "VALUE>5";// string.Format("name='{0}'", name);
+                featureSelection.SelectFeatures(pQueryFilter, esriSelectionResultEnum.esriSelectionResultNew, false);//选择线路名为name的线要素
+
+
+                IFeatureClass pFeatureclass = featureSelection.SelectionSet as IFeatureClass;
+
+                //这里这样写是不时就选好了那个WhereClause  另一个也是这么执行的 就是想当于你选好的  输入同的参数选择不同的  你稍等我下
+                //pFeature = pFeatureCursor.NextFeature();
+                //  }
+                ESRI.ArcGIS.DataManagementTools.CopyFeatures copyFeatures = new CopyFeatures();
+                copyFeatures.in_features = pFeatureclass;// pFeatureLayer.FeatureClass;
+                copyFeatures.out_feature_class = @"D:\测试\searchResult3.shp";
+                gp.OverwriteOutput = true;
+                gp.Execute(copyFeatures, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+               
+            }
+        }
+        //筛选函数
+        private IFeatureClass selectfeature(IFeatureLayer featureLayer, string whereclause)
+        {
+            IFeatureClass featureclass = null;
+            try
+            {
+
+                IQueryFilter pQueryFilter = new QueryFilterClass();
+                IFeatureCursor pFeatureCursor = featureLayer.Search(pQueryFilter, false);
+                IFeature pFeature = pFeatureCursor.NextFeature();
+                // while (pFeature != null)//遍历线图层的name，将线图层中的name和点图层中的lineName加入选择集并对两个选择集进行near，勾选location生成nearX和nearY
+                // {
+                IFeatureSelection featureSelection = featureLayer as IFeatureSelection;
+
+                //string name = pFeature.get_Value(2).ToString();//线图层的name字段
+                pQueryFilter.WhereClause = whereclause;// string.Format("name='{0}'", name);
+                featureSelection.SelectFeatures(pQueryFilter, esriSelectionResultEnum.esriSelectionResultNew, false);//选择线路名为name的线要素
+
+
+                featureLayer = featureSelection as IFeatureLayer;
+
+                //这里这样写是不时就选好了那个WhereClause  另一个也是这么执行的 就是想当于你选好的  输入同的参数选择不同的  你稍等我下
+                //pFeature = pFeatureCursor.NextFeature();
+                //  }
+                ESRI.ArcGIS.DataManagementTools.CopyFeatures copyFeatures = new CopyFeatures();
+                copyFeatures.in_features = featureLayer.FeatureClass;
+                copyFeatures.out_feature_class = @"D:\测试\searchResult1.shp";
+                gp.OverwriteOutput = true;
+                gp.Execute(copyFeatures, null);
+                //featureclass = featureLayer.FeatureClass;
+
+
+
+                return featureclass;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+
         //select提取淹没范围
         public IFeatureClass selectFeatureClass(Geoprocessor gp, IFeatureClass sourceFeatureClass,string out_FeatureClassPath,string out_FeatureClassName)
         {
@@ -1069,8 +1300,9 @@ namespace DataConver
                 select.in_features = sourceFeatureClass;
                 select.out_feature_class = out_FeatureClassPath +"\\"+ out_FeatureClassName;
                 select.where_clause = "VALUE > 0";
+                gp.OverwriteOutput = true;
                 gp.Execute(select,null);
-                Msg(out_FeatureClassName + "生成成功！");
+                //Msg(out_FeatureClassName + "生成成功！");
                 return shpToFeatureClass(out_FeatureClassName, out_FeatureClassPath);
             }
             catch(Exception ex)
@@ -1164,15 +1396,12 @@ namespace DataConver
             }
         }
         //copy要素赋值
-        public void IntersectFeature(Geoprocessor gp,string  sourseFeature1, string n1,string  sourseFeature2Name,  string SavaFeature)
+        public void IntersectFeature(Geoprocessor gp, string sourseFeature,string aimFeature)
         {
             try
             {
                 ESRI.ArcGIS.AnalysisTools.Intersect intersectFeatures = new Intersect();
-                intersectFeatures.in_features = sourseFeature1 +"\\"+n1+ ";" + sourseFeature2Name;
-                intersectFeatures.out_feature_class = SavaFeature;
-                intersectFeatures.output_type = "POINT";
-                gp.OverwriteOutput = true;
+
                 gp.Execute(intersectFeatures, null);
             }
             catch (Exception ex)
@@ -1250,7 +1479,7 @@ namespace DataConver
             }
         }
         //村庄点面叠置统计
-        public int caculateCountry(string shpFilePath,string shpFileName )
+        public int caculateCountry( string shpFilePath,string shpFileName)
         {
             try
             {
@@ -1427,8 +1656,8 @@ namespace DataConver
                 workspace.Caption = "MapResult";
                 workspace.Save();
                 Msg("工作空间创建成功：" + workspace.Caption);
-                System.Threading.Thread.Sleep(500);
-                Msg(lab_progress.Text = "正在导入符号库···");
+                //System.Threading.Thread.Sleep(500);
+                Msg("正在导入符号库···");
                 DirectoryInfo di = new DirectoryInfo(symbol);
                 foreach (FileInfo fill in di.GetFiles("*.bru"))
                 {
@@ -1463,7 +1692,7 @@ namespace DataConver
 
                     DatasourceConnectionInfo ds = new DatasourceConnectionInfo();
                     ds.Alias = fl[s].Name.Substring(0, fl[s].Name.Length - 4);
-                    Msg(lab_progress.Text = "添加数据源：" + ds.Alias);
+                    Msg( "添加数据源：" + ds.Alias);
                     
                     ds.Server = sources + "\\" + fl[s].ToString();
                     ds.Password = set.passWod;
@@ -2277,6 +2506,8 @@ namespace DataConver
                 MessageBox.Show(ex.Message);
             }
         }
+        //--------------测试函数-----------------------------------------------------------
+        
         
     }
 }
