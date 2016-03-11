@@ -1297,3 +1297,6 @@ D:\移动风险监测\1.19升级\DataConverV2.0-开发\DataConver\obj\x86\Debug\
 D:\移动风险监测\1.19升级\DataConverV2.0-开发\DataConver\obj\x86\Debug\DataConver.exe.licenses
 D:\移动风险监测\1.19升级\DataConverV2.0-开发\DataConver\obj\x86\Debug\DataConver.exe.manifest
 D:\移动风险监测\1.19升级\DataConverV2.0-开发\DataConver\obj\x86\Debug\DataConver.application
+D:\移动风险监测\1.19升级\DataConver（V2.0开发）\DataConver\bin\Debug\DataConver.exe.config
+D:\移动风险监测\1.19升级\DataConver（V2.0开发）\DataConver\obj\x86\Debug\DataConver.exe
+D:\移动风险监测\1.19升级\DataConver（V2.0开发）\DataConver\obj\x86\Debug\DataConver.pdb
